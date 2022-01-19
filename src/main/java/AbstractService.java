@@ -65,12 +65,26 @@ public abstract class AbstractService {
         File certificateFile = new File(Thread.currentThread().getContextClassLoader().getResource("").getPath() + certificateFileName);
 
         try {
-            return new String(Files.readAllBytes(certificateFile.toPath()), Charset.defaultCharset());
+            String retrievedCertificateContent = new String(Files.readAllBytes(certificateFile.toPath()), Charset.defaultCharset());
+
+            return this.sanitizeCertificate(retrievedCertificateContent);
+//            return new String(Files.readAllBytes(certificateFile.toPath()), Charset.defaultCharset());
         } catch (IOException e) {
             throw new RuntimeException("Issue loading " + certificateFileName + " file at: " + certificateFile.toPath(), e);
         }
     }
 
+//    private static String removeAllNewLines(String text) {
+//
+//        String textWithoutLineFeeds = StringUtils.remove(text, "\n");
+//
+//        return StringUtils.remove(textWithoutLineFeeds, "\r");
+//    }
+
+    private static String sanitizeCertificate(String text) {
+
+        return text.replace("\\r\\n", System.lineSeparator()).replace("\\n", System.lineSeparator()).replace("\\r", System.lineSeparator());
+    }
 
     /* ---- Getters and Setters ---- */
 }
